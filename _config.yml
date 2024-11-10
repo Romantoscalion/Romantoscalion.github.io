@@ -102,6 +102,6 @@ theme: Kratos-Rebirth-2.2.0
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repository: https://github.com/Romantoscalion/Romantoscalion.github.io
+  repo: https://github.com/Romantoscalion/Romantoscalion.github.io
   branch: gh-pages
 
