@@ -1,12 +1,12 @@
 # Global 全局配置
 site_analytics: ''
 hoster: <a href="https://github.io" target="_blank">Github Pages</a>
-site_logo: ''
-snow: false
+site_logo: /images/site_logo.webp
+snow: true
 click_animate_js: 'candy'
 enable_dark: true
 highlight_theme: night-eighties # 代码高亮主题（light | night | night-eighties | night-blue | night-bright）
-check_update: true
+check_update: false
 # canonical: true
 
 vendors:
@@ -53,8 +53,8 @@ customStyles:
 # Index 首页配置
 index:
   post_type: false
-  read_count: true
-  comment_count: true
+  read_count: false
+  comment_count: false
 
 # Top Menu 顶部导航栏配置 （具体格式请参照文档）
 menu:
@@ -97,7 +97,11 @@ contact: # 出于兼容性考虑，继续保留
     username:
   github:
   rss:
-footerLinks: [] # 可以自定义
+footerLinks: 
+  - icon: github
+    link: https://github.com/Romantoscalion
+  - icon: bold
+    link: https://space.bilibili.com/24291549
 timenotice: 本站已运行
 icp: 
 psr:
@@ -105,10 +109,10 @@ psr:
 # Post Page 文章页配置
 posts:
   show_cc: true
-  donate: false
+  donate: true
   share: true
   comments: 
-    provider: ''
+    provider: false
     enableBGImage: false
   wordCount: 
     enable: true
@@ -177,14 +181,14 @@ livere:
   id: city
   uid:
 
-# APlayer 左下角音乐播放器
+# APlayer 左下角音乐播放器 https://music.163.com/playlist?id=7067349249&uct2=U2FsdGVkX1+652ksB745TIgYjOlOx/v5NmNgm+8agoE=
 aplayer:
   enabled: true
   playlist: 
   meting:
     server: netease
     type: playlist
-    id: 3204190542
+    id: 7067349249
   order: random
 
 # Widgets 侧边栏小挂件
@@ -219,16 +223,16 @@ jsconfig:
       randomAmount: 20 # 表示从1~20
       baseUrl: null # 使用默认值（不单独配置），将跟随 vendors 中的相关设定选择是否使用 cdn
       filenameTemplate: "thumb_{no}.webp" 
-    createTime: "2018/05/06 17:03:12"
-    donateBtn: "支持我~"
-    scanNotice: "扫一扫，好不好？"
+    createTime: "2024/11/10 21:09:49" 
+    donateBtn: "打赏作者"
+    scanNotice: "文章有帮助的话，请我喝听可乐吧♪(^∇^*)"
     qr_alipay: "/images/alipayqr.webp"
     qr_wechat: "/images/wechatpayqr.webp"
     siteLeaveEvent: false
     leaveTitle: "{{{(>_<)}}}哦哟，崩溃啦~"
     returnTitle: "(*´∇｀*)欸，又好啦~"
     copyrightNotice: "该内容采用 CC BY-NC-SA 4.0 许可协议，著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"
-    expire_day: 30
+    expire_day: 3600
     topNavScrollToggle: true
 
 # Site verify 站点验证相关配置内容
