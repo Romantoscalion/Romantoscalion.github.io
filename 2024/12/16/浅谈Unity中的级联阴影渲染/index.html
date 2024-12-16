@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <link rel="icon" href="/images/site_logo.webp">
   
-  <title>Hello World | 浪漫葱香的博客</title>
+  <title>浅谈Unity中的级联阴影渲染 | 浪漫葱香的博客</title>
   
   <meta name="author" content="浪漫葱香" />
   <meta http-equiv="Cache-Control" content="no-transform" />
@@ -15,20 +15,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="format-detection" content="telphone=no, email=no" />
   
-    <meta name="keywords" content="短篇, 长篇" />
+    <meta name="keywords" content="渲染, 长篇" />
   
-  <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+  <meta name="description" content="Unity URP中的阴影方案是“SSSM（Screen Space Shadow Mapping，屏幕空间阴影映射）”，本文将对Unity中的默认阴影方案做简单的解读。 光源有光源才能投出阴影，光源上也有一些阴影相关的配置。   以主平行光为例，通过FrameDebuger观察到调整其阴影配置时传入GPU的_MainLightShadowParams发生变化。  从URPLitShader中观察">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="https://romantoscalion.github.io/2024/11/13/hello-world/index.html">
+<meta property="og:title" content="浅谈Unity中的级联阴影渲染">
+<meta property="og:url" content="https://romantoscalion.github.io/2024/12/16/%E6%B5%85%E8%B0%88Unity%E4%B8%AD%E7%9A%84%E7%BA%A7%E8%81%94%E9%98%B4%E5%BD%B1%E6%B8%B2%E6%9F%93/index.html">
 <meta property="og:site_name" content="浪漫葱香的博客">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="Unity URP中的阴影方案是“SSSM（Screen Space Shadow Mapping，屏幕空间阴影映射）”，本文将对Unity中的默认阴影方案做简单的解读。 光源有光源才能投出阴影，光源上也有一些阴影相关的配置。   以主平行光为例，通过FrameDebuger观察到调整其阴影配置时传入GPU的_MainLightShadowParams发生变化。  从URPLitShader中观察">
 <meta property="og:locale">
 <meta property="og:image" content="https://romantoscalion.github.io/images/site_logo.webp">
-<meta property="article:published_time" content="2024-11-13T13:00:34.000Z">
-<meta property="article:modified_time" content="2024-11-22T02:44:05.925Z">
+<meta property="article:published_time" content="2024-12-16T10:05:18.000Z">
+<meta property="article:modified_time" content="2024-12-16T12:10:52.507Z">
 <meta property="article:author" content="浪漫葱香">
-<meta property="article:tag" content="短篇">
+<meta property="article:tag" content="渲染">
 <meta property="article:tag" content="长篇">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://romantoscalion.github.io/images/site_logo.webp">
@@ -164,15 +164,15 @@
 
             <article itemscope itemtype="https://schema.org/Article">
     
-    <link itemprop="mainEntityOfPage" href="https://romantoscalion.github.io/2024/11/13/hello-world/">
+    <link itemprop="mainEntityOfPage" href="https://romantoscalion.github.io/2024/12/16/%E6%B5%85%E8%B0%88Unity%E4%B8%AD%E7%9A%84%E7%BA%A7%E8%81%94%E9%98%B4%E5%BD%B1%E6%B8%B2%E6%9F%93/">
     <div class="kratos-hentry kratos-post-inner clearfix">
         <header class="kratos-entry-header">
             
-                <h1 class="kratos-entry-title text-center" itemprop="name headline">Hello World</h1>
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">浅谈Unity中的级联阴影渲染</h1>
             
             
             <ul class="kratos-post-meta text-center">
-                <li><time datetime="2024-11-13T13:00:34.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2024-11-13</time></li>
+                <li><time datetime="2024-12-16T10:05:18.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2024-12-16</time></li>
                 <li itemprop="author" itemscope itemtype="https://schema.org/Person">
                     <i class="fa fa-user"></i> 作者 <span itemprop="name">浪漫葱香</span>
                 </li>
@@ -181,7 +181,7 @@
                         <i class="fa fa-edit"></i> 
                         
                         
-                            444
+                            ~5.28K
                         
                         字
                     </li>
@@ -193,25 +193,67 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1732243445925"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1734351052507"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
             
+                <div class="kratos-post-inner-toc toc-div-class" >
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%89%E6%BA%90"><span class="toc-number">1.</span> <span class="toc-text">光源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%A7%E8%81%94%E9%98%B4%E5%BD%B1"><span class="toc-number">2.</span> <span class="toc-text">级联阴影</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shadow-Map%E7%9A%84%E7%94%9F%E6%88%90"><span class="toc-number">3.</span> <span class="toc-text">Shadow Map的生成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A7%E8%81%94ShadowMap"><span class="toc-number">3.1.</span> <span class="toc-text">级联ShadowMap</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B4%E5%BD%B1%E7%9A%84%E6%B8%B2%E6%9F%93"><span class="toc-number">4.</span> <span class="toc-text">阴影的渲染</span></a></li></ol>
+                </div>
+            
             <hr />
-            <div itemprop="articleBody"><p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+            <div itemprop="articleBody"><p>Unity URP中的阴影方案是<strong>“SSSM（Screen Space Shadow Mapping，屏幕空间阴影映射）”</strong>，本文将对Unity中的默认阴影方案做简单的解读。</p>
+<h2 id="光源"><a href="#光源" class="headerlink" title="光源"></a>光源</h2><p>有光源才能投出阴影，光源上也有一些阴影相关的配置。</p>
+<p><img src="/./../images/Untitled(2).png"> </p>
+<p>以<strong>主平行光</strong>为例，通过FrameDebuger观察到调整其阴影配置时传入GPU的<code>_MainLightShadowParams</code>发生变化。</p>
+<p><img src="/./../images/Untitled(3).png" alt="Untitled(3)"></p>
+<p>从URPLitShader中观察到<code>_MainLightShadowParams</code>控制了这些表现：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float4      _MainLightShadowParams;   <span class="comment">// (x: shadowStrength, y: &gt;= 1.0 if soft shadows, 0.0 otherwise, z: main light fade scale, w: main light fade bias)</span></span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<h2 id="级联阴影"><a href="#级联阴影" class="headerlink" title="级联阴影"></a>级联阴影</h2><p>在Unity的渲染管线资产中，可以配置主光源的级联阴影参数。</p>
+<p><img src="/./../images/image-20241211184132662.png" alt="image-20241211184132662"> </p>
+<p>级联阴影是以牺牲远处阴影质量为代价、提升近处阴影质量的一种技术。</p>
+<p>级联数量为4意味着ShadowMap将被<strong>等分为4个象限</strong>，彩色的条带代表了<strong>最大距离内四个象限如何分配阴影图的空间</strong>。</p>
+<p>如紫色块0上的信息，意味着距离相机0~6.2米的渲染点将会使用第0象限的阴影图，第0象限储存了6.2米内的场景的深度信息，绿色块1则意味着相机6.2~14.6米的渲染点将使用第1象限的阴影图，第1象限储存了8.5米的有效信息。下图为4级联的示意阴影图：</p>
+<p><img src="/./../images/image-20241212165828684.png" alt="image-20241212165828684"> </p>
+<p>级联阴影的做法有点类似于图像的伽马编码，将更多的精度用于存储人眼比较敏感的暗部信息。</p>
+<h2 id="Shadow-Map的生成"><a href="#Shadow-Map的生成" class="headerlink" title="Shadow Map的生成"></a>Shadow Map的生成</h2><p>物体被渲染时，会<strong>比较灯光坐标系下渲染点深度和ShadowMap中记录的最小深度</strong>，如果渲染点的深度大于最小深度，说明渲染点处于阴影中；如果使用了PCSS等滤波软阴影方案，则会多次采样ShadowMap，得到一个0~1的值用于描述渲染点被阴影遮蔽的程度。最终，<strong>用Shadow值去影响输出颜色</strong>，就让一个物体接受了阴影。</p>
+<p>那么这张ShadowMap是如何生成的呢？</p>
+<p>以主平行光为例，可以从FrameDebuger中观察到在渲染管线流程的靠前部分渲染了主光源的Shadow Map。这里暂时没有考虑级联阴影。</p>
+<p><img src="/./../images/Untitled(4).png" alt="Untitled(4)"> </p>
+<p>为什么这张Shadow Map长这样？它是怎么被渲染出来的？</p>
+<p>与正常渲染一个物体的流程类似地，<strong>Shadow Map也是通过流水线进行渲染的</strong>。首先管线会创建一个<strong>特定的相机</strong>，然后<strong>调用场景里所有投影物体的Shader的ShadowCaster这个Pass</strong>，Pass本身不输出颜色。待所有的物体的ShadowCaster执行完毕后，将当前的<strong>深度缓冲输出到作为RenderTarget的ShadowMap</strong>即可。</p>
+<p><strong>如果有多个光源，每个光源都会以上述的流程渲染自己的ShadowMap。</strong></p>
+<p><img src="/./../images/image-20241212153854247.png" alt="image-20241212153854247"> </p>
+<p>上面所谓的<strong>特定的相机</strong>是如何确定的呢？</p>
+<p>笔者在灯光GameObject下添加一个相机，尝试复刻出ShadowMap来。</p>
+<p>首先来确定相机的Transform。相机的<strong>朝向就是光源的朝向</strong>，位置则是<strong>主相机前方最大阴影距离处</strong>；这个最大阴影距离通过渲染管线资产进行配置。</p>
+<p><img src="/./../images/image-20241212161248301.png" alt="image-20241212161248301"> </p>
+<p>然后配置相机上的参数。根据平行光的特性，需要将相机的<strong>投影类型改为正交投影</strong>；然后将<strong>相机的视野大小也改为最大阴影距离</strong>，同时为了避免场景被远近裁剪平面裁剪，需要配置一个<strong>合适的裁剪平面距离</strong>。</p>
+<p>设置完成后，就能从这个新的相机中观察到与主相机ShadowMap一模一样的轮廓，主平行光渲染ShadowMap的相机就是使用类似这样的方法确定的。</p>
+<p><img src="/./../images/Untitled(5).png" alt="Untitled(5)"> </p>
+<h3 id="级联ShadowMap"><a href="#级联ShadowMap" class="headerlink" title="级联ShadowMap"></a>级联ShadowMap</h3><p>级联ShadowMap相对于上面单张ShadowMap的渲染流程稍有差异。</p>
+<p>首先<strong>DrawCall的次数将会变成级联数</strong>，每个级联的ShadowMap会渲染到最终输出ShadowMap对应的象限中。</p>
+<p>其次<strong>每个级联相机的位置和视野大小也是不同的</strong>，需要根据级联的分割参数做出对应的调整。</p>
+<p><img src="/./../images/image-20241212171017782.png" alt="image-20241212171017782"></p>
+<h2 id="阴影的渲染"><a href="#阴影的渲染" class="headerlink" title="阴影的渲染"></a>阴影的渲染</h2><p>得到ShadowMap后，在渲染物体时就可以比较渲染点在灯光坐标系下的深度和ShadowMap中记录的深度，以此来判断渲染点是否在阴影的遮蔽中。</p>
+<p>Unity软阴影的实现是<strong>对ShadowMap以一个固定大小的滤波核进行滤波，滤波结果就是被阴影遮蔽的程度</strong>。</p>
+<p>下列代码块是高质量设置下软阴影的代码，共采样ShadowMap16次：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">real SampleShadowmapFilteredHighQuality(TEXTURE2D_SHADOW_PARAM(ShadowMap, sampler_ShadowMap), float4 shadowCoord, ShadowSamplingData samplingData)</span><br><span class="line">&#123;</span><br><span class="line">    real fetchesWeights[<span class="number">16</span>];</span><br><span class="line">    real2 fetchesUV[<span class="number">16</span>];</span><br><span class="line">    SampleShadow_ComputeSamples_Tent_7x7(samplingData.shadowmapSize, shadowCoord.xy, fetchesWeights, fetchesUV);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> fetchesWeights[<span class="number">0</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">0</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">1</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">1</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">2</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">2</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">3</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">3</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">4</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">4</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">5</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">5</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">6</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">6</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">7</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">7</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">8</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">8</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">9</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">9</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">10</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">10</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">11</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">11</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">12</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">12</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">13</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">13</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">14</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">14</span>].xy, shadowCoord.z))</span><br><span class="line">                + fetchesWeights[<span class="number">15</span>] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[<span class="number">15</span>].xy, shadowCoord.z));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+
+
+<p>与PCSS不同的是，<strong>Unity的SSSM没有根据渲染点离遮蔽物的距离去动态调整滤波核的Step步长，因此SSSM无法做到PCSS那样真实的近实远虚的软阴影，只能让阴影的边缘不那么锐利。</strong></p>
+<p><img src="/./../images/Untitled(6).png" alt="Untitled(6)"> </p>
+<p>拿到遮蔽程度后，Unity URP LIt Shader将其<strong>乘到光源的衰减系数里面</strong>，影响最终输出的颜色：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">half3 LightingPhysicallyBased(BRDFData brdfData, BRDFData brdfDataClearCoat, Light light, half3 normalWS, half3 viewDirectionWS, half clearCoatMask, <span class="type">bool</span> specularHighlightsOff)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> LightingPhysicallyBased(brdfData, brdfDataClearCoat, light.color, light.direction, light.distanceAttenuation * light.shadowAttenuation, normalWS, viewDirectionWS, clearCoatMask, specularHighlightsOff);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">half3 LightingPhysicallyBased(BRDFData brdfData, BRDFData brdfDataClearCoat,</span><br><span class="line">    half3 lightColor, half3 lightDirectionWS, <span class="type">float</span> lightAttenuation,</span><br><span class="line">    half3 normalWS, half3 viewDirectionWS,</span><br><span class="line">    half clearCoatMask, <span class="type">bool</span> specularHighlightsOff)</span><br><span class="line">&#123;</span><br><span class="line">    half NdotL = saturate(<span class="built_in">dot</span>(normalWS, lightDirectionWS));</span><br><span class="line">    half3 radiance = lightColor * (lightAttenuation * NdotL);</span><br><span class="line">  	<span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">return</span> brdf * radiance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如此这般，物体上就渲染出了阴影。</p>
 </div>
         </div>
         
@@ -267,7 +309,7 @@
     <script type="text/javascript">
         $(()=>{
             new QRCode("wechat-qr", {
-                text: "https://romantoscalion.github.io/2024/11/13/hello-world/",
+                text: "https://romantoscalion.github.io/2024/12/16/%E6%B5%85%E8%B0%88Unity%E4%B8%AD%E7%9A%84%E7%BA%A7%E8%81%94%E9%98%B4%E5%BD%B1%E6%B8%B2%E6%9F%93/",
                 width: 150,
                 height: 150,
                 correctLevel : QRCode.CorrectLevel.H
@@ -279,9 +321,12 @@
             const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
             const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
             const twitterBase   = "https://twitter.com/intent/tweet?";
-            const hostUrl       = "https://romantoscalion.github.io/2024/11/13/hello-world/";
-            const title         = "「Hello World」";
-            const excerpt       = `Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using ...`;
+            const hostUrl       = "https://romantoscalion.github.io/2024/12/16/%E6%B5%85%E8%B0%88Unity%E4%B8%AD%E7%9A%84%E7%BA%A7%E8%81%94%E9%98%B4%E5%BD%B1%E6%B8%B2%E6%9F%93/";
+            const title         = "「浅谈Unity中的级联阴影渲染」";
+            const excerpt       = `Unity URP中的阴影方案是“SSSM（Screen Space Shadow Mapping，屏幕空间阴影映射）”，本文将对Unity中的默认阴影方案做简单的解读。
+光源有光源才能投出阴影，光源上也有一些阴影相关的配置。
+ 
+以...`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -300,10 +345,10 @@
             <div class="footer-tag clearfix">
                 <div class="pull-left">
                 <i class="fa fa-tags"></i>
-                    <a class="tag-none-link" href="/tags/%E7%9F%AD%E7%AF%87/" rel="tag">短篇</a>, <a class="tag-none-link" href="/tags/%E9%95%BF%E7%AF%87/" rel="tag">长篇</a>
+                    <a class="tag-none-link" href="/tags/%E6%B8%B2%E6%9F%93/" rel="tag">渲染</a>, <a class="tag-none-link" href="/tags/%E9%95%BF%E7%AF%87/" rel="tag">长篇</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2024-11-22T02:44:05.925Z" itemprop="dateModified">最后编辑：2024-11-22</time>
+                    <time datetime="2024-12-16T12:10:52.507Z" itemprop="dateModified">最后编辑：2024-12-16</time>
                 </div>
             </div>
         </footer>
@@ -311,10 +356,10 @@
     
         <nav class="navigation post-navigation clearfix" role="navigation">
             
-            
-            <div class="nav-next clearfix">
-                <a title=" 关于Material Property Block" href="/2024/11/26/关于MPB——Material Property Block/">下一篇 &gt;</a>
+            <div class="nav-previous clearfix">
+                <a title=" 关于Material Property Block" href="/2024/11/26/关于MPB——Material Property Block/">&lt; 上一篇</a>
             </div>
+            
             
         </nav>
     
@@ -373,6 +418,18 @@
 </aside>
             
                     <div class="sticky-area">
+                
+                    <aside id="krw-toc" class="widget widget-kratos-toc clearfix toc-div-class" >
+    <div class="photo-background"></div>
+    <h4 class="widget-title no-after">
+        <i class="fa fa-compass"></i>
+        文章目录
+        <span class="toc-progress-bar" role="progressbar" aria-label="阅读进度："></span>
+    </h4>
+    <div class="textwidget">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%89%E6%BA%90"><span class="toc-text">光源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%A7%E8%81%94%E9%98%B4%E5%BD%B1"><span class="toc-text">级联阴影</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shadow-Map%E7%9A%84%E7%94%9F%E6%88%90"><span class="toc-text">Shadow Map的生成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A7%E8%81%94ShadowMap"><span class="toc-text">级联ShadowMap</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B4%E5%BD%B1%E7%9A%84%E6%B8%B2%E6%9F%93"><span class="toc-text">阴影的渲染</span></a></li></ol>
+    </div>
+</aside>
                 
                 
   <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
