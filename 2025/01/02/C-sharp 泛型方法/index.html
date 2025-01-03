@@ -203,7 +203,7 @@
 <p>有时候我们会希望定义自己的泛型方法，在我的情况中，我希望编写一个方法用于检查一个委托中是否已经订阅了某个方法。</p>
 <p>如果不使用泛型方法，需要为每一种Action都重载一个方法的实现，非常麻烦。</p>
 <p>如果像下面这样使用泛型方法的话，会非常方便：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">&#123;   </span><br><span class="line">    Action&lt;<span class="built_in">string</span>&gt; action = (<span class="built_in">string</span> str) =&gt; &#123;&#125;;</span><br><span class="line">    <span class="keyword">var</span> del = <span class="keyword">new</span> Action&lt;<span class="built_in">string</span>&gt;((<span class="built_in">string</span> str) =&gt; &#123;&#125;);</span><br><span class="line">    Console.WriteLine(ActionHasDelegate(action, del)); <span class="comment">// Output: False</span></span><br><span class="line">    action += del;</span><br><span class="line">    Console.WriteLine(ActionHasDelegate(action, del)); <span class="comment">// Output: True</span></span><br><span class="line"></span><br><span class="line">    Action&lt;<span class="built_in">int</span>, <span class="built_in">string</span>&gt; action1 = (<span class="built_in">int</span> i, <span class="built_in">string</span> str) =&gt; &#123;&#125;;</span><br><span class="line">    <span class="keyword">var</span> del1 = <span class="keyword">new</span> Action&lt;<span class="built_in">int</span>, <span class="built_in">string</span>&gt;((<span class="built_in">int</span> i, <span class="built_in">string</span> str) =&gt; &#123;&#125;);</span><br><span class="line">    Console.WriteLine(ActionHasDelegate(action1, del1)); <span class="comment">// Output: False</span></span><br><span class="line">    action1 += del1;</span><br><span class="line">    Console.WriteLine(ActionHasDelegate(action1, del1)); <span class="comment">// Output: True</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">ActionHasDelegate</span>&lt;<span class="title">T</span>&gt;(<span class="params">T action, Delegate del</span>) <span class="keyword">where</span> T : Delegate</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> d <span class="keyword">in</span> action.GetInvocationList())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (d == del)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] <span class="keyword">args</span></span>)</span></span><br><span class="line">&#123;   </span><br><span class="line">    Action&lt;<span class="built_in">string</span>&gt; action = (<span class="built_in">string</span> str) =&gt; &#123;&#125;;</span><br><span class="line">    <span class="keyword">var</span> del = <span class="keyword">new</span> Action&lt;<span class="built_in">string</span>&gt;((<span class="built_in">string</span> str) =&gt; &#123;&#125;);</span><br><span class="line">    Console.WriteLine(ActionHasDelegate(action, del)); <span class="comment">// Output: False</span></span><br><span class="line">    action += del;</span><br><span class="line">    Console.WriteLine(ActionHasDelegate(action, del)); <span class="comment">// Output: True</span></span><br><span class="line"></span><br><span class="line">    Action&lt;<span class="built_in">int</span>, <span class="built_in">string</span>&gt; action1 = (<span class="built_in">int</span> i, <span class="built_in">string</span> str) =&gt; &#123;&#125;;</span><br><span class="line">    <span class="keyword">var</span> del1 = <span class="keyword">new</span> Action&lt;<span class="built_in">int</span>, <span class="built_in">string</span>&gt;((<span class="built_in">int</span> i, <span class="built_in">string</span> str) =&gt; &#123;&#125;);</span><br><span class="line">    Console.WriteLine(ActionHasDelegate(action1, del1)); <span class="comment">// Output: False</span></span><br><span class="line">    action1 += del1;</span><br><span class="line">    Console.WriteLine(ActionHasDelegate(action1, del1)); <span class="comment">// Output: True</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">ActionHasDelegate</span>&lt;<span class="title">T</span>&gt;(<span class="params">T action, Delegate del</span>) <span class="keyword">where</span> T : Delegate</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> d <span class="keyword">in</span> action.GetInvocationList())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (d == del)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>可以观察到泛型方法ActionHasDelegate对于不同类型的Action都能够顺利判断，可喜可贺，可喜可贺。</p>
 </div>
@@ -311,6 +311,10 @@
             </div>
             
             
+            <div class="nav-next clearfix">
+                <a title=" VSCode清理&#34;GIT:重新打开已关闭的储存库&#34;列表" href="/2025/01/03/VSCode清理GIT-重新打开已关闭的储存库列表/">下一篇 &gt;</a>
+            </div>
+            
         </nav>
     
     
@@ -345,7 +349,7 @@
                 文章
             </span>
             <span class="count">
-                5
+                6
             </span>
         </a>
         <a class="meta-item" href="/categories/">
@@ -361,7 +365,7 @@
                 标签
             </span>
             <span class="count">
-                4
+                6
             </span>
         </a>
     </div>
@@ -372,7 +376,7 @@
                 
   <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
     <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Unity/">Unity</a><span class="category-list-count">5</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Unity/">Unity</a><span class="category-list-count">6</span></li></ul>
   </aside>
 
 
@@ -381,7 +385,7 @@
   <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
     <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
       <div class="tag-clouds">
-        <a href="/tags/C/" style="font-size: 0.6em;">C#</a> <a href="/tags/%E6%B8%B2%E6%9F%93/" style="font-size: 0.6em;">渲染</a> <a href="/tags/%E7%9F%AD%E7%AF%87/" style="font-size: 0.8em;">短篇</a> <a href="/tags/%E9%95%BF%E7%AF%87/" style="font-size: 0.6em;">长篇</a>
+        <a href="/tags/C/" style="font-size: 0.7em;">C#</a> <a href="/tags/IDE/" style="font-size: 0.6em;">IDE</a> <a href="/tags/VSCode/" style="font-size: 0.6em;">VSCode</a> <a href="/tags/%E6%B8%B2%E6%9F%93/" style="font-size: 0.7em;">渲染</a> <a href="/tags/%E7%9F%AD%E7%AF%87/" style="font-size: 0.8em;">短篇</a> <a href="/tags/%E9%95%BF%E7%AF%87/" style="font-size: 0.7em;">长篇</a>
       </div>
   </aside>
 
@@ -392,6 +396,12 @@
   <div class="tab-content">
       <ul class="list-group">
         
+        
+          
+          
+            <a class="list-group-item" href="/2025/01/03/VSCode%E6%B8%85%E7%90%86GIT-%E9%87%8D%E6%96%B0%E6%89%93%E5%BC%80%E5%B7%B2%E5%85%B3%E9%97%AD%E7%9A%84%E5%82%A8%E5%AD%98%E5%BA%93%E5%88%97%E8%A1%A8/"><i class="fa  fa-book"></i> VSCode清理"GIT:重新打开已关闭的储存库"列表</a>
+            
+          
         
           
           
@@ -418,11 +428,7 @@
           
         
           
-          
-            <a class="list-group-item" href="/2024/11/13/hello-world/"><i class="fa  fa-book"></i> Hello World</a>
             
-          
-        
       </ul>
   </div>
   </aside>
