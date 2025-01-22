@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="/images/site_logo.webp">
+  
+  <title>Unity切线空间及其应用 | 浪漫葱香的博客</title>
+  
+  <meta name="author" content="浪漫葱香" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="图形学, 渲染, 线性代数, 长篇" />
+  
+  <meta name="description" content="Object空间是每个Mesh独有的、在建模阶段就已经确定的空间；Vertex的顶点位置、法线方向等信息都记录在Object空间中。 切线空间是每个Vertex独有的、由Vertex的切线、副切线和法线分别作为XYZ坐标轴、以Vertex在Object空间下的位置作为Pivot组成的空间。切线空间会跟随Mesh的变形（Skinned Mesh等）而改变，这是因为Mesh变形时，Vertex的法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity切线空间及其应用">
+<meta property="og:url" content="https://romantoscalion.github.io/2025/01/22/Unity%E5%88%87%E7%BA%BF%E7%A9%BA%E9%97%B4%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="浪漫葱香的博客">
+<meta property="og:description" content="Object空间是每个Mesh独有的、在建模阶段就已经确定的空间；Vertex的顶点位置、法线方向等信息都记录在Object空间中。 切线空间是每个Vertex独有的、由Vertex的切线、副切线和法线分别作为XYZ坐标轴、以Vertex在Object空间下的位置作为Pivot组成的空间。切线空间会跟随Mesh的变形（Skinned Mesh等）而改变，这是因为Mesh变形时，Vertex的法">
+<meta property="og:locale">
+<meta property="og:image" content="https://romantoscalion.github.io/images/site_logo.webp">
+<meta property="article:published_time" content="2025-01-22T08:20:07.000Z">
+<meta property="article:modified_time" content="2025-01-22T08:24:03.367Z">
+<meta property="article:author" content="浪漫葱香">
+<meta property="article:tag" content="长篇">
+<meta property="article:tag" content="渲染">
+<meta property="article:tag" content="线性代数">
+<meta property="article:tag" content="图形学">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://romantoscalion.github.io/images/site_logo.webp">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" media="all"></script>
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-color-dark.min.css" media="(prefers-color-scheme: dark)"></script>
+    <script src="/js/kr-dark.min.js"></script>
+  
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" media="all"></script>
+  
+  <link rel="stylesheet" id="fontawe-css" href="/vendors/font-awesome@4.7.0/css/font-awesome.min.css" media="all"></script>
+  <link rel="stylesheet" id="nprogress-css" href="/vendors/nprogress@0.2.0/nprogress.css" media="all"></script>
+  
+  
+    <link rel="stylesheet" href="/vendors/aplayer@1.10.1/dist/APlayer.min.css"></script>
+  
+  
+    <link rel="stylesheet" href="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"></script>
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="/vendors/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="/vendors/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+  
+  <style>
+    
+    
+  </style>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                    
+                                        
+                                            <li><a href="/"><i class="fa fa-home"></i>首页</a></li>
+                                        
+                                    
+                                        
+                                            <li><a href="/archives/"><i class="fa fa-file"></i>档案馆</a></li>
+                                        
+                                    
+                                        
+                                            <li><a href="/tags/"><i class="fa fa-tags"></i>标签</a></li>
+                                        
+                                    
+                                        
+                                            <li><a href="/categories/"><i class="fa fa-folder"></i>分类</a></li>
+                                        
+                                    
+                                        
+                                            <li><a href="/about/"><i class="fa fa-user"></i>关于</a></li>
+                                        
+                                    
+                                        
+                                            <li>
+                                                <a><i class="fa fa-link"></i>链接</a>
+                                                <ul class="sub-menu">
+                                                    
+                                                        
+                                                    
+                                                        
+                                                            <li><a target="_blank" rel="noopener" href="https://space.bilibili.com/24291549">Bilibili</a></li>
+                                                        
+                                                    
+                                                        
+                                                            <li><a target="_blank" rel="noopener" href="https://github.com/Romantoscalion/Romantoscalion.github.io">项目链接</a></li>
+                                                        
+                                                    
+                                                </ul>
+                                            </li>
+                                        
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">浪漫葱香的博客</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>浪漫葱香的博客</h2> <br />
+                        <span>怎么还有副标题?!Σ(っ °Д °;)っ</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article itemscope itemtype="https://schema.org/Article">
+    
+    <link itemprop="mainEntityOfPage" href="https://romantoscalion.github.io/2025/01/22/Unity%E5%88%87%E7%BA%BF%E7%A9%BA%E9%97%B4%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/">
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <header class="kratos-entry-header">
+            
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">Unity切线空间及其应用</h1>
+            
+            
+            <ul class="kratos-post-meta text-center">
+                <li><time datetime="2025-01-22T08:20:07.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2025-01-22</time></li>
+                <li itemprop="author" itemscope itemtype="https://schema.org/Person">
+                    <i class="fa fa-user"></i> 作者 <span itemprop="name">浪漫葱香</span>
+                </li>
+                
+                    <li>
+                        <i class="fa fa-edit"></i> 
+                        
+                        
+                            ~2.36K
+                        
+                        字
+                    </li>
+                
+                
+            </ul>
+        </header>
+        <div class="kratos-post-content">
+            
+            <div id="expire-alert" class="alert alert-warning hidden" role="alert">
+                <div class="icon"><i class="fa fa-warning"></i></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1737534243367"></time> 前，其中的内容可能需要更新。</p></div>
+            </div>
+            
+            
+            
+                <div class="kratos-post-inner-toc toc-div-class" >
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E7%BA%BF%E7%9A%84%E7%A1%AE%E5%AE%9A%E6%96%B9%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">切线的确定方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%AF%E5%88%87%E7%BA%BF%E7%9A%84%E7%A1%AE%E5%AE%9A%E6%96%B9%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">副切线的确定方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E7%BA%BF%E7%A9%BA%E9%97%B4%E7%9A%84%E5%8F%98%E6%8D%A2%E7%9F%A9%E9%98%B5"><span class="toc-number">3.</span> <span class="toc-text">切线空间的变换矩阵</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E7%BA%BF%E7%A9%BA%E9%97%B4%E7%9A%84%E5%BA%94%E7%94%A8%E6%80%9D%E8%B7%AF"><span class="toc-number">4.</span> <span class="toc-text">切线空间的应用思路</span></a></li></ol>
+                </div>
+            
+            <hr />
+            <div itemprop="articleBody"><p><img src="/./../images/Untitled-1737013294595-1.png" alt="Untitled-1737013294595-1"> </p>
+<p>Object空间是每个Mesh独有的、在建模阶段就已经确定的空间；Vertex的顶点位置、法线方向等信息都记录在Object空间中。</p>
+<p>切线空间是每个Vertex独有的、由Vertex的切线、副切线和法线分别作为XYZ坐标轴、以Vertex在Object空间下的位置作为Pivot组成的空间。切线空间会跟随Mesh的变形（Skinned Mesh等）而改变，这是因为Mesh变形时，Vertex的法线、切线和副切线也会随之变换。</p>
+<h2 id="切线的确定方式"><a href="#切线的确定方式" class="headerlink" title="切线的确定方式"></a>切线的确定方式</h2><p>模型文件导入Unity后会生成Mesh资产，Vertex的法线直接从模型文件中读取，而切线会根据Vertex的UV重新计算。</p>
+<p>在Unity Mesh中，Vertex的切线方向是一个与其法线垂直的、指向uv中U维增大方向的向量。</p>
+<p>下面这张GIF中，蓝线代表Vertex的法线，黄线代表Vertex的切线。可以观察到，当UV开始旋转时，Vertex的切线方向也随之旋转，它始终指向UV中U维增大的方向。</p>
+<p><img src="/./../images/demo-1737015590428-5.gif" alt="demo-1737015590428-5"> </p>
+<h2 id="副切线的确定方式"><a href="#副切线的确定方式" class="headerlink" title="副切线的确定方式"></a>副切线的确定方式</h2><p>副切线是同时垂直于法线和切线的向量，存在两个这样的方向。</p>
+<p>参考<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/103546030">这篇文章</a>可以得知：副切线的选择由切线向量的w维（建模时确定）及RendererTransform的Scale同时确定。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fixed tangentSign = v.tangent.w * unity_WorldTransformParams.w;</span><br><span class="line">fixed3 worldBinormal = <span class="built_in">cross</span>(worldNormal, worldTangent) * tangentSign;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="切线空间的变换矩阵"><a href="#切线空间的变换矩阵" class="headerlink" title="切线空间的变换矩阵"></a>切线空间的变换矩阵</h2><p>从Mesh中可以获取Vertex在Object空间中的位置、切线、副切线和法线的方向，可以来构建TangentToObject矩阵了。</p>
+<p>根据我们学过的线性代数知识，要构建一个LocalToWorld的变换矩阵，需要将4X4矩阵的第一列设置为X轴的方向向量、第二列设置为Y轴的方向向量、第三列设置为Z轴的方向向量、第四列设置为Translate、矩阵的第四行设置为（0,0,0,1）。</p>
+<p>TangentToObject变换是一种LocalToWorld变换，因此它们的步骤也是一致的。在Unity中，我们约定切线空间的X轴为切线方向（右），Y轴方向为副切线方向（上）， Z轴方向为法线方向（前），可以用下面的代码来构建TangentToObject矩阵：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Mesh中没有直接储存副切线向量，需要做一步计算：</span></span><br><span class="line">Vector3 OSBitangent = OSTangent.w * Vector3.Cross(OSNormal, OSTangent);</span><br><span class="line"><span class="comment">// 构建objectToTangent矩阵</span></span><br><span class="line"><span class="keyword">var</span> tangentToObject = <span class="keyword">new</span> Matrix4x4();</span><br><span class="line">tangentToObject.SetColumn(<span class="number">0</span>, <span class="keyword">new</span> Vector4(OSTangent.x, OSTangent.y, OSTangent.z, <span class="number">0.0f</span>));</span><br><span class="line">tangentToObject.SetColumn(<span class="number">1</span>, <span class="keyword">new</span> Vector4(OSBitangent.x, OSBitangent.y, OSBitangent.z, <span class="number">0.0f</span>));</span><br><span class="line">tangentToObject.SetColumn(<span class="number">2</span>, <span class="keyword">new</span> Vector4(OSNormal.x, OSNormal.y, OSNormal.z, <span class="number">0.0f</span>));</span><br><span class="line">tangentToObject.SetColumn(<span class="number">3</span>, <span class="keyword">new</span> Vector4(OSPosition.x, OSPosition.y, OSPosition.z, <span class="number">1.0f</span>));</span><br><span class="line"><span class="keyword">var</span> objectToTangent = Matrix4x4.Inverse(tangentToObject);</span><br></pre></td></tr></table></figure>
+
+<p>※：使用Mesh.GetNormals()等方法获取到的Mesh的法线、切线和副切线方向是已经经过归一化的，不需要额外处理。另外，在ShaderGraph中直接通过Normal Vector等节点获取到的法线、切线和副切线方向也是经过归一化的，也不需要再额外处理。</p>
+<h2 id="切线空间的应用思路"><a href="#切线空间的应用思路" class="headerlink" title="切线空间的应用思路"></a>切线空间的应用思路</h2><p>切线空间的应用思路一般是：将Object空间信息在制作阶段转为Tangent空间信息（特殊的位置、方向等），保存到Vertex的数据位或者贴图中；在Shader中，将读取到的Tangent空间信息重新转回Object空间使用。</p>
+<p>你可能会好奇，为什么要这么倒腾一下呢？这是因为切线空间有一个重要的非常好的性质，那就是在文章开头提到过的：切线空间会跟随Mesh的变形发生改变（这是因为Vertex的法线和切线都会随着Mesh的变形发生改变），因此当Shader把切线空间中的特殊数据转回Object空间时，这份特殊数据也会接受到Mesh的变形。</p>
+<p>从下面的GIF中，我们可以清晰地观察到切线空间的变化：</p>
+<p><img src="/./../images/demo-1737528465210-2.gif" alt="demo-1737528465210-2"> </p>
+<p>切线空间最广泛的应用是法线贴图，一般来说法线贴图中储存的就是切线空间中对法线方向的<u>扰动</u>。</p>
+<p>我们来通过一个例子来看下如果将法线方向扰动储存在Object空间中会导致什么样的结果：</p>
+<p><img src="/./../images/image-20250122120145767.png" alt="image-20250122120145767"> </p>
+<p>如果按照常规将法线偏移信息储存在切线空间中，变形后的物体法线方向正确：</p>
+<p><img src="/./../images/image-20250122120320798.png" alt="image-20250122120320798"></p>
+<p>※：这也能引申出法线贴图总是呈现蓝紫色的原因，物体的表面大部分区域扰动并不强烈，即“扰动方向和几何图元法线的夹角很小”，表现在偏移方向向量上就是：（x方向-切线方向-小值，y方向-副切线方向-小值，z方向-几何图元法线方向-大值），几乎（0,0,1）的状态；又因为单位向量每维度的取值范围是-1~1，因此需要做一步<code>remap(-1,1,0,1,x);</code>，就变成了（0.5,0.5,1），将其转换为颜色就是法线贴图中常见的蓝紫色。</p>
+</div>
+        </div>
+        
+            <div class="kratos-copyright text-center clearfix">
+                <h5 itemprop="copyrightNotice">本作品采用 <a rel="license nofollow" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可</h5>
+            </div>
+        
+        <footer class="kratos-entry-footer clearfix">
+            
+                <div class="post-like-donate text-center clearfix" id="post-like-donate">
+                
+                    <a class="donate" href="javascript:;"><i class="fa fa-bitcoin"></i> 打赏</a>
+                
+                
+                    <a class="share" href="javascript:;"><i class="fa fa-share-alt"></i> 分享</a>
+                    <div class="share-wrap" style="display: none;">
+    <div class="share-group">
+        <a href="javascript:;" class="share-plain qq" onclick="share('qq');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-qq"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain qzone" onclick="share('qzone');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-star"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weixin pop style-plain" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weixin"></i>
+            </div>
+            <div class="share-int">
+                <div class="qrcode" id="wechat-qr"></div>
+                <p>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</p>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weibo" onclick="share('weibo');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weibo"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain facebook style-plain" onclick="share('facebook');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-facebook"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain twitter style-plain" onclick="share('twitter');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-twitter"></i>
+            </div>
+        </a>
+    </div>
+    <script type="text/javascript">
+        $(()=>{
+            new QRCode("wechat-qr", {
+                text: "https://romantoscalion.github.io/2025/01/22/Unity%E5%88%87%E7%BA%BF%E7%A9%BA%E9%97%B4%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/",
+                width: 150,
+                height: 150,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+        function share(dest) {
+            const qqBase        = "https://connect.qq.com/widget/shareqq/index.html?";
+            const weiboBase     = "https://service.weibo.com/share/share.php?";
+            const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
+            const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
+            const twitterBase   = "https://twitter.com/intent/tweet?";
+            const hostUrl       = "https://romantoscalion.github.io/2025/01/22/Unity%E5%88%87%E7%BA%BF%E7%A9%BA%E9%97%B4%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/";
+            const title         = "「Unity切线空间及其应用」";
+            const excerpt       = ` 
+Object空间是每个Mesh独有的、在建模阶段就已经确定的空间；Vertex的顶点位置、法线方向等信息都记录在Object空间中。
+切线空间是每个Vertex独有的、由Vertex的切线、副切线和法线分别作为XYZ坐标轴、以Ve...`;
+            let _URL;
+            switch (dest) {
+                case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
+                case "weibo"    : _URL = weiboBase+"url="+hostUrl+"&title="+title+excerpt;                                 break;
+                case "qzone"    : _URL = qzoneBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";  break;
+                case "facebook" : _URL = facebookBase+"u="+hostUrl;                                                        break;
+                case "twitter"  : _URL = twitterBase+"text="+title+excerpt+"&url="+hostUrl;                                break;
+            }
+            window.open(_URL);
+        };
+    </script>
+</div>
+                
+                </div>
+            
+            <div class="footer-tag clearfix">
+                <div class="pull-left">
+                <i class="fa fa-tags"></i>
+                    <a class="tag-none-link" href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" rel="tag">图形学</a>, <a class="tag-none-link" href="/tags/%E6%B8%B2%E6%9F%93/" rel="tag">渲染</a>, <a class="tag-none-link" href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" rel="tag">线性代数</a>, <a class="tag-none-link" href="/tags/%E9%95%BF%E7%AF%87/" rel="tag">长篇</a>
+                </div>
+                <div class="pull-date">
+                    <time datetime="2025-01-22T08:24:03.367Z" itemprop="dateModified">最后编辑：2025-01-22</time>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+        <nav class="navigation post-navigation clearfix" role="navigation">
+            
+            <div class="nav-previous clearfix">
+                <a title=" Mesh顶点的连接性" href="/2025/01/22/Mesh顶点的连接性/">&lt; 上一篇</a>
+            </div>
+            
+            
+        </nav>
+    
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" loading="lazy" decoding="auto" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center">首先是宅宅，然后是菜狗技术美术工程师ο(=•ω＜=)ρ⌒☆</p>
+    </div>
+    <div class="site-meta">
+        <a class="meta-item" href="/archives/">
+            <span class="title">
+                文章
+            </span>
+            <span class="count">
+                10
+            </span>
+        </a>
+        <a class="meta-item" href="/categories/">
+            <span class="title">
+                分类
+            </span>
+            <span class="count">
+                1
+            </span>
+        </a>
+        <a class="meta-item" href="/tags/">
+            <span class="title">
+                标签
+            </span>
+            <span class="count">
+                10
+            </span>
+        </a>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                    <aside id="krw-toc" class="widget widget-kratos-toc clearfix toc-div-class" >
+    <div class="photo-background"></div>
+    <h4 class="widget-title no-after">
+        <i class="fa fa-compass"></i>
+        文章目录
+        <span class="toc-progress-bar" role="progressbar" aria-label="阅读进度："></span>
+    </h4>
+    <div class="textwidget">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E7%BA%BF%E7%9A%84%E7%A1%AE%E5%AE%9A%E6%96%B9%E5%BC%8F"><span class="toc-text">切线的确定方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%AF%E5%88%87%E7%BA%BF%E7%9A%84%E7%A1%AE%E5%AE%9A%E6%96%B9%E5%BC%8F"><span class="toc-text">副切线的确定方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E7%BA%BF%E7%A9%BA%E9%97%B4%E7%9A%84%E5%8F%98%E6%8D%A2%E7%9F%A9%E9%98%B5"><span class="toc-text">切线空间的变换矩阵</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E7%BA%BF%E7%A9%BA%E9%97%B4%E7%9A%84%E5%BA%94%E7%94%A8%E6%80%9D%E8%B7%AF"><span class="toc-text">切线空间的应用思路</span></a></li></ol>
+    </div>
+</aside>
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Unity/">Unity</a><span class="category-list-count">10</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/C/" style="font-size: 0.75em;">C#</a> <a href="/tags/IDE/" style="font-size: 0.6em;">IDE</a> <a href="/tags/VSCode/" style="font-size: 0.6em;">VSCode</a> <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" style="font-size: 0.6em;">图形学</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 0.6em;">工具</a> <a href="/tags/%E6%B8%B2%E6%9F%93/" style="font-size: 0.65em;">渲染</a> <a href="/tags/%E7%9F%AD%E7%AF%87/" style="font-size: 0.8em;">短篇</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" style="font-size: 0.6em;">线性代数</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 0.6em;">设计模式</a> <a href="/tags/%E9%95%BF%E7%AF%87/" style="font-size: 0.7em;">长篇</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2025/01/22/Unity%E5%88%87%E7%BA%BF%E7%A9%BA%E9%97%B4%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/"><i class="fa  fa-book"></i> Unity切线空间及其应用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2025/01/22/Mesh%E9%A1%B6%E7%82%B9%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%80%A7/"><i class="fa  fa-book"></i> Mesh顶点的连接性</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2025/01/22/CSharp%20Enumerable%20Aggregate/"><i class="fa  fa-book"></i> C# Enumerable Aggregate</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2025/01/16/CSharp%20delegate%20event%20%E5%92%8C%20%E4%BA%8B%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><i class="fa  fa-book"></i> C# delegate event 和 事件系统</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2025/01/03/VSCode%E6%B8%85%E7%90%86GIT-%E9%87%8D%E6%96%B0%E6%89%93%E5%BC%80%E5%B7%B2%E5%85%B3%E9%97%AD%E7%9A%84%E5%82%A8%E5%AD%98%E5%BA%93%E5%88%97%E8%A1%A8/"><i class="fa  fa-book"></i> VSCode清理"GIT:重新打开已关闭的储存库"列表</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  class="ap-lrc"  >
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        <!-- Keep for compatibility -->
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <!-- New links -->
+                        
+                            <li>
+                                <a target="_blank" rel="nofollow" href="https://github.com/Romantoscalion">
+                                    
+                                        <i class="fa fa-github"></i>
+                                    
+                                </a>
+                            </li>
+                        
+                            <li>
+                                <a target="_blank" rel="nofollow" href="https://space.bilibili.com/24291549">
+                                    
+                                        <i class="fa fa-bold"></i>
+                                    
+                                </a>
+                            </li>
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2025 浪漫葱香的博客 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by 浪漫葱香.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="snow-switch">
+                        <span class="fa fa-snowflake-o"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="/vendors/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="/vendors/nprogress@0.2.0/nprogress.js"></script>
+<script>
+    if (!window.kr) {
+        window.kr = {};
+    }
+    window.kr.notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));
+    window.kr.siteRoot = "/";
+</script>
+
+    <div>
+        <canvas id="snow"></canvas>
+        <script async src="/js/snow.min.js"></script>
+    </div>
+
+
+    <script async src="/js/candy.min.js"></script>
+
+
+
+    <script defer src="/vendors/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    
+    <script defer src="/vendors/meting@2.0.1/dist/Meting.min.js"></script>
+    <meting-js
+        server="netease"
+        type="playlist"
+        id="7067349249"
+        order="random"
+        fixed="true"
+    >
+    </meting-js>
+
+
+
+    <script defer src="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+    <script defer src="/vendors/layui-src@2.5.5/dist/layui.all.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    </body>
+</html>
